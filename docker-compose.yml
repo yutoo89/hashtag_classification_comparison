@@ -16,7 +16,7 @@ services:
     build: .
     command: python main.py
     volumes:
-      - .:/usr/src/app
+      - .:/app
     depends_on:
       - db
 
