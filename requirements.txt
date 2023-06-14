@@ -1,0 +1,6 @@
+pymysql
+sqlalchemy
+transformers
+torch
+numpy
+scikit-learn
