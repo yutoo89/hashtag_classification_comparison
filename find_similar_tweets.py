@@ -1,13 +1,19 @@
+import configparser
 from sqlalchemy import select
 from sklearn.metrics.pairwise import cosine_similarity
 from transformers import BertModel, BertTokenizer
 from sqlalchemy import create_engine, Table, MetaData
 
+# 設定を読み込む
+config = configparser.ConfigParser()
+config.read('config.ini')
+
 # MySQLの設定
-username = "user"
-password = "password"
-hostname = "db"
-database = "tweets_db"
+username = config['DATABASE']['USERNAME']
+password = config['DATABASE']['PASSWORD']
+hostname = config['DATABASE']['HOSTNAME']
+database = config['DATABASE']['DATABASE']
+
 engine = create_engine(f"mysql+pymysql://{username}:{password}@{hostname}/{database}")
 
 # BERTの設定
