@@ -1,4 +1,5 @@
 import configparser
+import pandas as pd
 from sqlalchemy import create_engine, Table, MetaData
 from sqlalchemy.sql import insert
 
@@ -15,11 +16,7 @@ database = config['DATABASE']['DATABASE']
 engine = create_engine(f"mysql+pymysql://{username}:{password}@{hostname}/{database}")
 
 # ダミーのツイート
-tweets = [
-    {"id": 1, "text": "This is the first tweet."},
-    {"id": 2, "text": "This is another tweet."},
-    # ...
-]
+df_tweet = pd.read_csv("tweets.csv")
 
 # ツイートをデータベースに保存
 with engine.begin() as connection:
@@ -27,6 +24,6 @@ with engine.begin() as connection:
     metadata.bind = engine
 
     tweet_table = Table('tweets', metadata, autoload_with=engine)
-    for tweet in tweets:
-        stmt = insert(tweet_table).values(id=tweet["id"], text=tweet["text"])
+    for tweet in df_tweet['text']:
+        stmt = insert(tweet_table).values(text=tweet)
         connection.execute(stmt)
