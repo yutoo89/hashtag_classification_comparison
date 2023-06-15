@@ -19,7 +19,7 @@ connection = pymysql.connect(
 # カーソルオブジェクトを作成
 cursor = connection.cursor()
 
-# tweetsテーブルを作成するSQL文
+# テーブルを作成するSQL文
 create_table_query = """
 CREATE TABLE IF NOT EXISTS tweets (
     id INT AUTO_INCREMENT PRIMARY KEY,

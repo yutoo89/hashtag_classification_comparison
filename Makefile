@@ -10,9 +10,13 @@ down:
 run:
 	docker-compose run app python main.py
 
-.PHONY: table
-table:
-	docker-compose run app python create_tables.py
+.PHONY: tweets
+tweets:
+	docker-compose run app python create_tweets_table.py
+
+.PHONY: tweet_vectors
+tweet_vectors:
+	docker-compose run app python create_tweet_vectors_table.py
 
 .PHONY: db
 db:
