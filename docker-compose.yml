@@ -16,7 +16,8 @@ services:
 
   app:
     build: .
-    command: python main.py
+    ports:
+      - 8888:8888
     volumes:
       - .:/app
     depends_on:

@@ -10,8 +10,8 @@ ADD . /app
 # Install any needed packages specified in requirements.txt
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
+# Make port 8888 available to the world outside this container
+EXPOSE 8888
 
-# Run app.py when the container launches
-CMD ["python", "main.py"]
+# Run jupyter notebook when the container launches
+CMD ["jupyter", "notebook", "--ip='*'", "--port=8888", "--no-browser", "--allow-root"]
