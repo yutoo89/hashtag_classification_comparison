@@ -1,37 +1,89 @@
-# tweet_vec_search
+# BERTを使ったTweetの検索
 
-データベースへの接続を確認する。
+自然言語処理（NLP）技術であるBERT（Bidirectional Encoder Representations from Transformers）を用いて、テキストメッセージの類似度を計算し、データベースから最も似たテキストメッセージを検索するアプリケーションです。
 
+このアプリケーションでは、検索性能よりも処理のシンプルさを優先しています。そのため、日本語テキストを事前学習したモデルを使用する、タスクに応じたファインチューニングを行うといった性能向上は別途行う必要があります。
+
+## 使用技術
+
+以下の技術を使用しています：
+
+- Python
+- BERT (Bidirectional Encoder Representations from Transformers)
+- MySQL
+- Docker
+- Docker Compose
+- Jupyter Notebook
+
+## シーケンス図
+
+```Mermaid
+sequenceDiagram
+    participant MySQL
+    participant Python
+    participant BERT
+
+    Note over BERT,MySQL: 事前準備
+    Python->>MySQL: テキストメッセージ100件を保存
+		MySQL->>Python: テキストメッセージ100件を取得
+    Python->>BERT: テキストメッセージをトークンに変換
+    BERT-->>Python: トークン
+    Python->>BERT: トークンをベクトル表現に変換
+    BERT-->>Python: ベクトル表現
+    Python->>MySQL: ベクトル表現を保存
+
+    Note over BERT,MySQL: 検索
+    Python->>BERT: 任意のテキストをトークンに変換
+    BERT-->>Python: トークン
+    Python->>BERT: トークンをベクトル表現に変換
+    BERT-->>Python: ベクトル表現
+    Python->>MySQL: 保存されているベクトル表現をすべて取得
+    MySQL-->>Python: 保存されたベクトル表現
+    Python->>Python: 今回テキストと保存されたテキストのコサイン類似度を計算
+　　　　　　　　Python->>MySQL: 今回のテキストに最も似たテキストメッセージを取得
+		MySQL->>Python: 最も似たテキストメッセージ
+    Python->>Python: 最も似たテキストメッセージを表示
 ```
-docker-compose exec -it db mysql -u user -ppassword
+
+## インストール方法
+
+このアプリケーションを実行するためには、DockerとDocker Composeが必要です。以下の公式サイトからそれぞれのインストール方法をご覧ください。
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+それらがインストールされたら、このリポジトリをクローンしてください。
+
+```bash
+git clone <repository_url>
 ```
 
-MySQLのプロンプトからシェルのプロンプトに戻る。
+そして、クローンしたディレクトリに移動します。
 
-```
-exit
+```bash
+cd <repository_directory>
 ```
 
-出力結果
+## 実行方法
 
+次に、以下のコマンドを使ってDockerコンテナを起動します。
+
+```bash
+make up
 ```
-[+] Running 1/0
- ✔ Container tweet_vec_search-db-1  Running                                                                                                                                                                                                                                                                                                                                           0.0s 
-Downloading (…)solve/main/vocab.txt: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 232k/232k [00:00<00:00, 970kB/s]
-Downloading (…)okenizer_config.json: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 28.0/28.0 [00:00<00:00, 2.80kB/s]
-Downloading (…)lve/main/config.json: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 570/570 [00:00<00:00, 513kB/s]
-Downloading model.safetensors: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 440M/440M [00:13<00:00, 33.6MB/s]
-Some weights of the model checkpoint at bert-base-uncased were not used when initializing BertModel: ['cls.seq_relationship.weight', 'cls.predictions.transform.dense.weight', 'cls.predictions.transform.dense.bias', 'cls.seq_relationship.bias', 'cls.predictions.bias', 'cls.predictions.transform.LayerNorm.weight', 'cls.predictions.transform.LayerNorm.bias']
-- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
-- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
-Input text: 一緒に働く田中が冗談を言って、場の雰囲気が良くなった。
-Most similar tweet: 犬の喜びそうな顔を見ると、一日の疲れが吹っ飛ぶ。
-Input text: 久しぶりに砂浜に行ってリフレッシュできた。
-Most similar tweet: 新しいプログラミング言語を学び始めた。チャレンジは成長につながる。
-Input text: 昨日読んだ推理小説の最後に驚くべきどんでん返しがあった。
-Most similar tweet: 昨日観た映画が素晴らしかった。深いメッセージが心に残った。
-Input text: 不具合の修正ばかりで1日が終わったが、やりきると清々しい。
-Most similar tweet: 猫の毛づくろいを見ていると癒される。彼らの日常が特別。
-Input text: サンスベリアを部屋に置くと有害物質を除去してくれるらしい。
-Most similar tweet: パズルゲームの新レベルをクリア。脳を活性化させる感じが好き。
+
+その後、以下のコマンドで`BERTを使ったtweetの検索.ipynb`を実行します。
+
+```bash
+make j
+```
+
+ブラウザで表示されるURLをクリックして、Jupyter Notebookを開きます。その後、`BERTを使ったtweetの検索.ipynb`を開いて各セルを順に実行します。
+
+## Dockerコンテナの停止方法
+
+以下のコマンドを実行してDockerコンテナを停止します。
+
+```bash
+make down
 ```
