@@ -55,13 +55,13 @@ sequenceDiagram
 それらがインストールされたら、このリポジトリをクローンしてください。
 
 ```bash
-git clone <repository_url>
+git clone https://github.com/yutoo89/tweet_vec_search.git
 ```
 
 そして、クローンしたディレクトリに移動します。
 
 ```bash
-cd <repository_directory>
+cd https://github.com/yutoo89/tweet_vec_search.git
 ```
 
 ## 実行方法
