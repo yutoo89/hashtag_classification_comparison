@@ -61,7 +61,7 @@ git clone https://github.com/yutoo89/tweet_vec_search.git
 そして、クローンしたディレクトリに移動します。
 
 ```bash
-cd https://github.com/yutoo89/tweet_vec_search.git
+cd tweet_vec_search
 ```
 
 ## 実行方法
