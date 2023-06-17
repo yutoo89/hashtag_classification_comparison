@@ -17,7 +17,7 @@
 
 ## シーケンス図
 
-```Mermaid
+```mermaid
 sequenceDiagram
     participant MySQL
     participant Python
