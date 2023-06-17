@@ -15,7 +15,7 @@
 - Docker Compose
 - Jupyter Notebook
 
-## シーケンス図
+## 処理の概要
 
 ```mermaid
 sequenceDiagram
