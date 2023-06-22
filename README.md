@@ -1,70 +1,53 @@
-# BERTを使ったTweetの検索
+# ハッシュタグのカテゴリ分類
 
-自然言語処理（NLP）技術であるBERT（Bidirectional Encoder Representations from Transformers）を用いて、テキストメッセージの類似度を計算し、データベースから最も似たテキストメッセージを検索するアプリケーションです。
+自然言語処理（NLP）技術、特にBERT、OpenAIのEmbedding API、ELECTRAを用いて、ハッシュタグのカテゴリ分類を行うアプリケーションです。
 
-このアプリケーションでは、検索性能よりも処理のシンプルさを優先しています。そのため、日本語テキストを事前学習したモデルを使用する、タスクに応じたファインチューニングを行うといった性能向上は別途行う必要があります。
+このアプリケーションでは、それぞれのモデルを用いてハッシュタグをベクトルに変換し、それを基にハッシュタグのカテゴリを予測します。そして、それぞれの予測結果を評価することで、各モデルの性能を比較します。
 
 ## 使用技術
 
 以下の技術を使用しています：
 
 - Python
-- BERT (Bidirectional Encoder Representations from Transformers)
-- MySQL
-- Docker
-- Docker Compose
-- Jupyter Notebook
+- pandas
+- numpy
+- torch
+- scikit-learn
+- seaborn
+- matplotlib
+- transformers (BERT, ELECTRA)
+- OpenAI Embedding API
 
 ## 処理の概要
 
-```mermaid
-sequenceDiagram
-    participant MySQL
-    participant Python
-    participant BERT
-
-    Note over BERT,MySQL: 事前準備
-    Python->>MySQL: テキストメッセージ100件を保存
-		MySQL->>Python: テキストメッセージ100件を取得
-    Python->>BERT: テキストメッセージをトークンに変換
-    BERT-->>Python: トークン
-    Python->>BERT: トークンをベクトル表現に変換
-    BERT-->>Python: ベクトル表現
-    Python->>MySQL: ベクトル表現を保存
-
-    Note over BERT,MySQL: 検索
-    Python->>BERT: 任意のテキストをトークンに変換
-    BERT-->>Python: トークン
-    Python->>BERT: トークンをベクトル表現に変換
-    BERT-->>Python: ベクトル表現
-    Python->>MySQL: 保存されているベクトル表現をすべて取得
-    MySQL-->>Python: 保存されたベクトル表現
-    Python->>Python: 今回テキストと保存されたテキストのコサイン類似度を計算
-　　　　　　　　Python->>MySQL: 今回のテキストに最も似たテキストメッセージを取得
-		MySQL->>Python: 最も似たテキストメッセージ
-    Python->>Python: 最も似たテキストメッセージを表示
-```
+1. ハッシュタグとそのカテゴリの情報が含まれたCSVファイルを読み込みます。
+2. BERT, OpenAIのEmbedding API, ELECTRAを用いて、ハッシュタグとカテゴリをそれぞれベクトルに変換します。
+3. 各ハッシュタグのベクトルと全カテゴリのベクトルのコサイン類似度を計算し、最も類似度が高いカテゴリを予測カテゴリとします。
+4. 実際のカテゴリと予測カテゴリを比較し、各モデルの性能を評価します。
 
 ## インストール方法
 
-このアプリケーションを実行するためには、DockerとDocker Composeが必要です。以下の公式サイトからそれぞれのインストール方法をご覧ください。
-
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
-
-それらがインストールされたら、このリポジトリをクローンしてください。
+このアプリケーションを実行するためには、Pythonとその必要なパッケージが必要です。Pythonのインストールは公式ウェブサイトを参照してください。Pythonがインストールされたら、このリポジトリをクローンしてください。
 
 ```bash
-git clone https://github.com/yutoo89/tweet_vec_search.git
+git clone https://github.com/yutoo89/hashtag_classification_comparison.git
 ```
 
-そして、クローンしたディレクトリに移動します。
+クローンしたディレクトリに移動します。
 
 ```bash
-cd tweet_vec_search
+cd hashtag_classification_comparison
 ```
 
 ## 実行方法
+
+.env_sampleをコピーして.envを作成してください。
+
+```
+cp .env_sample .env
+```
+
+`your_openai_api_key_here`は適宜、自身の情報に書き換えてください。
 
 次に、以下のコマンドを使ってDockerコンテナを起動します。
 
@@ -72,13 +55,7 @@ cd tweet_vec_search
 make up
 ```
 
-その後、以下のコマンドで`BERTを使ったtweetの検索.ipynb`を実行します。
-
-```bash
-make j
-```
-
-ブラウザで表示されるURLをクリックして、Jupyter Notebookを開きます。その後、`BERTを使ったtweetの検索.ipynb`を開いて各セルを順に実行します。
+ブラウザで表示されるURLをクリックして、Jupyter Notebookを開きます。その後、`ハッシュタグのカテゴリ分類の性能比較.ipynb`を開いて各セルを順に実行します。
 
 ## Dockerコンテナの停止方法
 
